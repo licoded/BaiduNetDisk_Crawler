@@ -5,6 +5,8 @@ const getProperty = async (element, property) => {
   return await (await element.getProperty(property)).jsonValue();
 };
 
+// services begins
+
 const refreshDialog = async (page) => {
   await page.goto('https://pan.baidu.com/disk/home');
 };
@@ -33,7 +35,24 @@ const upload = async (page, dirName, filePath) => {
   }
 };
 
+const createFolder = async (page, dirName, folderName) => {
+  const path = `/代替qq/B站录播/${dirName}`.replace(/\//g, '%2f');
+  await page.goto(`https://pan.baidu.com/disk/home#/all?vmode=list&path=${path}`);
+  await sleep(1500);
+  // eslint-disable-next-line max-len
+  const createSelector = '#layoutMain > div.DxdbeCb.g-clearfix > div.dtaqwpMr > div.lzwrAm > div.tcuLAu > span.g-dropdown-button.g-new-create';
+  await page.hover(createSelector);
+  // eslint-disable-next-line max-len
+  const createFolderSelector = '#layoutMain > div.DxdbeCb.g-clearfix > div.dtaqwpMr > div.lzwrAm > div.tcuLAu > span.g-dropdown-button.g-new-create > span > a:nth-child(1)';
+  await page.click(createFolderSelector);
+  const inputSelector = '#layoutMain > div.KPDwCE > div.ExFGye > div > input';
+  await page.$eval(inputSelector, (el, v) => el.value = v, folderName);
+  const okSelector = '#layoutMain > div.KPDwCE > div.ExFGye > div > span.qziyGPr0';
+  await page.click(okSelector);
+};
+
 module.exports = {
   upload,
   refreshDialog,
+  createFolder,
 };
