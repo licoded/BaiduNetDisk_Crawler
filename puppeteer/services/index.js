@@ -5,6 +5,12 @@ const getProperty = async (element, property) => {
   return await (await element.getProperty(property)).jsonValue();
 };
 
+const cd = async (page, dirName) => {
+  const path = `/代替qq/B站录播/${dirName}`.replace(/\//g, '%2f');
+  await page.goto(`https://pan.baidu.com/disk/home#/all?vmode=list&path=${path}`);
+  await sleep(1500);
+};
+
 // services begins
 
 const refreshDialog = async (page) => {
@@ -12,9 +18,7 @@ const refreshDialog = async (page) => {
 };
 
 const upload = async (page, dirName, filePath) => {
-  const path = `/代替qq/B站录播/${dirName}`.replace(/\//g, '%2f');
-  await page.goto(`https://pan.baidu.com/disk/home#/all?vmode=list&path=${path}`);
-  await sleep(1500);
+  await cd(page, dirName);
   const input = await page.$('input#h5Input0');
   await input.uploadFile(filePath);
   // eslint-disable-next-line no-constant-condition
@@ -36,9 +40,7 @@ const upload = async (page, dirName, filePath) => {
 };
 
 const createFolder = async (page, dirName, folderName) => {
-  const path = `/代替qq/B站录播/${dirName}`.replace(/\//g, '%2f');
-  await page.goto(`https://pan.baidu.com/disk/home#/all?vmode=list&path=${path}`);
-  await sleep(1500);
+  await cd(page, dirName);
   // eslint-disable-next-line max-len
   const createSelector = '#layoutMain > div.DxdbeCb.g-clearfix > div.dtaqwpMr > div.lzwrAm > div.tcuLAu > span.g-dropdown-button.g-new-create';
   await page.hover(createSelector);
@@ -51,8 +53,26 @@ const createFolder = async (page, dirName, folderName) => {
   await page.click(okSelector);
 };
 
+const getFileList = async (page, dirName) => {
+  await cd(page, dirName);
+  // eslint-disable-next-line max-len
+  const fileNameSelector = '#layoutMain > div.KPDwCE > div.zJMtAEb > div > div > dd';
+  const fileNameEleList = await page.$$(fileNameSelector);
+  const getFileDesc = async (e) => {
+    const fileNameEle = await e.$('div.file-name');
+    const name = await getProperty(fileNameEle, 'innerText');
+    const iconEle = await e.$('div.hnjsygbG');
+    const classList = await getProperty(iconEle, 'classList');
+    const type = Object.values(classList).includes('dir-small') ? 'folder' : 'file';
+    return { name, type };
+  };
+  const fileList = await Promise.all(fileNameEleList.map(getFileDesc));
+  return fileList;
+};
+
 module.exports = {
   upload,
   refreshDialog,
   createFolder,
+  getFileList,
 };

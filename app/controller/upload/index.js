@@ -1,6 +1,6 @@
 const { createRouter, SuccessResp } = require('../../tools');
 const { run } = require('../../../puppeteer/steps');
-const { upload, refreshDialog, createFolder } = require('../../../puppeteer/services');
+const { upload, refreshDialog, createFolder, getFileList } = require('../../../puppeteer/services');
 const router = createRouter('/upload');
 
 router.get('/refresh', async (ctx) => {
@@ -26,8 +26,20 @@ router.get('/upload', async (ctx) => {
 
 router.get('/createFolder', async (ctx) => {
   const { dirName, folderName } = ctx.request.query;
-  await run(createFolder, dirName, folderName);
-  ctx.body = SuccessResp('create ok');
+  const fileList = await run(getFileList, dirName);
+  const existFlag = fileList.some((item) => item.type === 'folder' && item.name === folderName);
+  if (existFlag) {
+    ctx.body = SuccessResp('ever exists');
+  } else {
+    await run(createFolder, dirName, folderName);
+    ctx.body = SuccessResp('create ok');
+  }
+});
+
+router.get('/getFileList', async (ctx) => {
+  const { dirName } = ctx.request.query;
+  const fileList = await run(getFileList, dirName);
+  ctx.body = SuccessResp(fileList);
 });
 
 module.exports = router;
