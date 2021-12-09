@@ -1,6 +1,6 @@
 const { createRouter, SuccessResp } = require('../../tools');
 const { run } = require('../../../puppeteer/steps');
-const { upload, createFolder } = require('../../../puppeteer/services');
+const { upload, createFolder, getFileList } = require('../../../puppeteer/services');
 const router = createRouter('/test');
 
 router.get('/test', (ctx) => {
@@ -28,7 +28,13 @@ router.post('/webhook', async (ctx) => {
     ctx.body = SuccessResp(`unknown RoomId ${RoomId}`);
   } else {
     const [subDir] = EventTimestamp.split('T');
-    await run(createFolder, dirName, subDir);
+    // 如果不存在就新建文件夹
+    const fileList = await run(getFileList, dirName);
+    const existFlag = fileList.some((item) => item.type === 'folder' && item.name === subDir);
+    if (!existFlag) {
+      await run(createFolder, dirName, subDir);
+    }
+    // 上传文件
     const finalPath = [dirName, subDir].join('/');
     console.log('[webhook]', `完成${finalPath}目录创建`);
     await run(upload, [dirName, subDir].join('/'), [workspace, RelativePath].join('/'));
