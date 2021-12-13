@@ -1,9 +1,20 @@
 const { createRouter, SuccessResp } = require('../../tools');
 const { run } = require('../../../puppeteer/steps');
+const { sleep } = require('../../../puppeteer/tools');
 const { upload, createFolder, getFileList } = require('../../../puppeteer/services');
 const router = createRouter('/test');
 
+const testWorker = async () => {
+  await sleep(1000);
+  console.log(1);
+  await sleep(1000);
+  console.log(2);
+  await sleep(1000);
+  console.log(3);
+};
+
 router.get('/test', (ctx) => {
+  testWorker();
   ctx.body = SuccessResp('test');
 });
 
@@ -31,12 +42,12 @@ router.post('/webhook', async (ctx) => {
     // 如果不存在就新建文件夹
     const fileList = await run(getFileList, dirName);
     const existFlag = fileList.some((item) => item.type === 'folder' && item.name === subDir);
+    const finalPath = [dirName, subDir].join('/');
     if (!existFlag) {
       await run(createFolder, dirName, subDir);
       console.log('[webhook]', `完成${finalPath}目录创建`);
     }
     // 上传文件
-    const finalPath = [dirName, subDir].join('/');
     run(upload, [dirName, subDir].join('/'), [workspace, RelativePath].join('/'));
     console.log('[webhook]', `已将${RelativePath}上传至${finalPath}目录`);
     ctx.body = SuccessResp('uploading');
