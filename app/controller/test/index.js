@@ -33,13 +33,13 @@ router.post('/webhook', async (ctx) => {
     const existFlag = fileList.some((item) => item.type === 'folder' && item.name === subDir);
     if (!existFlag) {
       await run(createFolder, dirName, subDir);
+      console.log('[webhook]', `完成${finalPath}目录创建`);
     }
     // 上传文件
     const finalPath = [dirName, subDir].join('/');
-    console.log('[webhook]', `完成${finalPath}目录创建`);
-    await run(upload, [dirName, subDir].join('/'), [workspace, RelativePath].join('/'));
+    run(upload, [dirName, subDir].join('/'), [workspace, RelativePath].join('/'));
     console.log('[webhook]', `已将${RelativePath}上传至${finalPath}目录`);
-    ctx.body = SuccessResp('upload ok');
+    ctx.body = SuccessResp('uploading');
   }
 });
 
