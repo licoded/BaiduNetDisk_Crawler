@@ -1,4 +1,7 @@
 const { MyKoa } = require('@licoded/koa-puppeteer');
+const middlewares = require('./middleware');
+const contexts = require('./context');
+const routers = require('./controller');
 
 new MyKoa({
   port: 3000,
@@ -6,5 +9,7 @@ new MyKoa({
   launch: {
     userDataDir: '/Users/lic/dev/products/puppeteer_baiduNetDisk/workspace',
   },
-  routers: [],
+  routers,
+  contexts,
+  middlewares,
 }).run();

@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/licoded/BaiduNetDisk_Crawler#readme",
   "dependencies": {
-    "@licoded/koa-puppeteer": "^1.0.2"
+    "@licoded/koa-puppeteer": "^1.0.5"
   }
 }
