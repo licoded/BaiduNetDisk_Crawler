@@ -1,0 +1,22 @@
+{
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/licoded/BaiduNetDisk_Crawler.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/licoded/BaiduNetDisk_Crawler/issues"
+  },
+  "homepage": "https://github.com/licoded/BaiduNetDisk_Crawler#readme",
+  "dependencies": {
+    "@licoded/koa-puppeteer": "^1.0.2"
+  }
+}
