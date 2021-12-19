@@ -3,7 +3,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node src/index.js"
+    "dev": "node app/index.js"
   },
   "repository": {
     "type": "git",
