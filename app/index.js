@@ -4,8 +4,8 @@ const contexts = require('./context');
 const routers = require('./controller');
 
 new MyKoa({
-  port: 3000,
-  debug: false,
+  port: 3002,
+  debug: true,
   launch: {
     userDataDir: '/Users/lic/dev/products/puppeteer_baiduNetDisk/workspace',
   },
